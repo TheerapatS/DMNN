@@ -8,12 +8,15 @@ from pre_process import pre_process
 if __name__ == "__main__":
     input_data_set = []
     df = pandas.read_excel('Data_Cortex_Nuclear.xls')
+
     columns = df.columns
     for i in columns:
         input_data_set.append (df[i].values)
 
-    data_set = pre_process(input_data_set, 1, 4)  # pre process
-
+    data_set,id_class = pre_process(input_data_set, 1, 4)  # pre process
+    for i in data_set:
+        print (i[0])
+    
     number_of_hidden, number_of_node_hidden, part_of_train, part_of_validate, activation_function = recieve_data()  #init data
     number_of_input = len(data_set)
     number_of_output = 2

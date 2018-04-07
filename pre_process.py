@@ -1,8 +1,13 @@
 import math
+from copy import deepcopy
+
 
 def pre_process (input_data_set, a, b):
     mean_of_column = [0] * len(input_data_set)
-    for i in range(1,78):
+    id_class = []
+    id_class.append(deepcopy(input_data_set[0]))
+    id_class.append(deepcopy(input_data_set[len(input_data_set)-1]))
+    for i in range(a,len(input_data_set)-b):
         mean_temp = 0.0
         n = 0
         for j in input_data_set[i]:
@@ -11,17 +16,14 @@ def pre_process (input_data_set, a, b):
                 n += 1
         mean_of_column[i] = mean_temp/n
     data_set = []
-    index = 0
+    data_set.append(deepcopy(input_data_set[0]))
+    index = 1
     for i in range(a,len(input_data_set)-b):
         data_set.append([])
         for j in input_data_set[i]:
-            if j == 'Control' or j == 'Memantine' or j == 'C/S':
-                data_set[index].append(0)
-            elif j == 'Ts65Dn' or j == 'Saline' or j == 'S/C':
-                data_set[index].append(1)
-            elif math.isnan(j):
+            if math.isnan(j):
                 data_set[index].append(mean_of_column[i])
             else:
                 data_set[index].append(j)
         index += 1
-    return data_set
+    return data_set,id_class

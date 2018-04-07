@@ -17,7 +17,7 @@ def recieve_data ():
 
     activation_function = -1
     while activation_function == -1:
-        input_str = input("Activation function [Sigmoid, tanh, ReLU, LeakyReLU] :: ")   # Sigmoid = 0 , tanh = 1 , ReLU = 2 , LeakyReLu = 3
+        input_str = input("Activation function [Sigmoid, tanh, ReLU, LeakyReLU] :: ")   # Sigmoid = 0 , tanh = 1 , ReLU = 2 , LeakyReLU = 3
         if input_str == 'Sigmoid':
             activation_function = 0
         elif input_str == 'tanh':
