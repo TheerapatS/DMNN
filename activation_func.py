@@ -24,8 +24,9 @@ def select_func (activation_function,dif):
         else :
             return Leaky_ReLU()
 
-def sigmoid():
-
+def sigmoid(n):
+    return (1/(1+(math.exp((-1)*(n))))
+    
 def tanh():
 
 def ReLU():
