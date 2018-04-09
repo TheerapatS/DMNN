@@ -12,6 +12,7 @@ def mk_neural_structure (number_of_hidden, number_of_node_hidden, number_of_inpu
     for i in range(number_of_hidden):
         H.append(deepcopy(temp))
         Y.append(deepcopy(temp))
+    Y.append(deepcopy(temp))
     X = []
     for i in range(number_of_hidden + 1):
         if i == 0:
