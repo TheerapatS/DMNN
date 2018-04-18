@@ -18,15 +18,11 @@ if __name__ == "__main__":
     #     print (i[0])
     
     number_of_hidden, number_of_node_hidden, part_of_validate, activation_function = recieve_data()  #init data
-    number_of_input = len(data_set)
-    number_of_output = 2
+    number_of_input = len(data_set) - 5
+    number_of_output = 8
 
     I, X, H, Y, O, g = mk_neural_structure ( number_of_hidden, number_of_node_hidden, number_of_input, number_of_output)
-    # print (I)
-    # print (X)
-    # print (H)
-    # print (Y)
-    # print (O)
+    
     # test
     # I = [1, 0, 1, 1]
     # X = [[0.3,0.2,0.1,0.2,0.2,0.1,0.1,0.3],[0.1,0.2,0.1,0.2]]
@@ -34,12 +30,12 @@ if __name__ == "__main__":
     # H = [[0,0]]
     # Y = [[0.2,0.4],[0.1,0.2]]
     # O = [0,0]
-    # D = [1,0]
-    # # dW = deepcopy(X)
-    # # print (dW)
+    
+    # dW = deepcopy(X)
+    # print (dW)
     # activation_function = 0
-    # learning_rate = 0.1
-    train(data_set, learning_rate, I, X, H, Y, O, g, D, activation_function)
+    learning_rate = 0.01
+    train(data_set, learning_rate, I, X, H, Y, O, g, activation_function,part_of_validate)
     # c_data_set = converset_data(data_set)
     # class_data = [[],[],[],[],[],[],[],[]]
     # for i in c_data_set:
@@ -47,12 +43,12 @@ if __name__ == "__main__":
     # for i in class_data:
     #     print (len(i))
 
-    a,b = cross_validation(class_data,part_of_validate,len(c_data_set))
-    for i in a:
-        print (len(i))
-    # print (a[0])
+    # a,b = cross_validation(class_data,part_of_validate,len(c_data_set))
+    # for i in a:
+    #     print (len(i))
+    # # print (a[0])
     
-    print (len(b))
+    # print (len(b))
     
         
 

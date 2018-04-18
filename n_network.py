@@ -3,76 +3,128 @@ from copy import deepcopy
 import math
 import random
 
-def train (data_set, learning_rate, I, X, H, Y, O, g, D, activation_function):
+def train (data_set, learning_rate, I, X, H, Y, O, g,  activation_function, part_of_validate):
     round = 0
+    path_output = "E:\Work\\2_60\DM\HW2\Output\output_03.txt"
+    path_weight = "E:\Work\\2_60\DM\HW2\Output\X_03.txt"
+    path_bias = "E:\Work\\2_60\DM\HW2\Output\Y_03.txt"
+    file_output = open(path_output,'w')
+    file_x = open(path_weight,'w')
+    file_y = open(path_bias,'w')
     dWx = deepcopy(X)
     dWy = deepcopy(Y)
     c_data_set = converset_data(data_set)
     class_data = [[],[],[],[],[],[],[],[]]
+    num_of_instant_train = 0
     for i in c_data_set:
         class_data = class_tokenize(i,class_data)
-    while round<1:
-        if round == 0:
+    for i in range(len(X)):
+        for j in range(len(X[i])):
+            t = random.randint(1,3)
+            X[i][j] = t/30
+            file_x.write(str(X[i][j]) + " ")
+        file_x.write('\n')
+
+    for i in range(len(Y)):
+        for j in range(len(Y[i])):
+            t = random.randint(1,3)
+            Y[i][j] = t/30
+            file_y.write(str(Y[i][j]) + " ")
+        file_y.write('\n')
+    while round < 1000:
+        if round%int(10/part_of_validate) == 0:
             data_for_train,data_test = cross_validation(class_data,part_of_validate,len(c_data_set))
-        for i in range(len(H)+1):
-            if i < len(H):
-                for j in range(len(H[i])):
-                    if i == 0:
-                        for k in range(len(I)):
-                            H[i][j] += I[k]*(X[i][(k*len(H[i]))+j])
-                    else :
-                        for k in range(len(H[i-1])):
-                            H[i][j] += H[i-1][k]*(X[i][(k*len(H[i]))+j])
-                    H[i][j] += Y[i][j]
-                    x = H[i][j]
-                    H[i][j] = act_func(x,activation_function)
-            else :
-                for j in range(len(O)):
-                    for k in range(len(H[len(H)-1])):
-                            O[j] += H[len(H)-1][k]*(X[i][(k*len(O))+j])                     
-                    O[j] += Y[i][j]
-                    x = O[j]
-                    O[j] = act_func(x,activation_function)
-                    e = D[j] - O[j]
-                    g[i][j] = (e) * (act_func(O[j],activation_function,dif=True))
-        for i in range(len(H) , -1, -1):
-            if i == len(H):
-                for j in range(len(g[i-1])):
-                    for k in range(len(O)):
-                        g[i-1][j] += X[i][k+(len(O)*j)] * g[i][k]
-                    g[i-1][j] *= act_func(H[i-1][j],activation_function,dif=True)
 
-                for k in range(len(dWx[i])):
-                    if k % len(O) == 0:  
-                        dWx[i][k] = (-1)*(learning_rate)*(g[i][k%len(O)])*(H[i-1][int(k/len(O))])
+        for data_train_index in range(len(data_for_train)):
+            for each_data_train_index in range(len(data_for_train[data_train_index])):
+                # print (data_for_train[data_train_index][each_data_train_index])
+                # print (data_for_train[data_train_index][each_data_train_index][len(data_for_train[data_train_index][each_data_train_index])-1])
+                I,D = set_I_D(data_for_train[data_train_index][each_data_train_index], I)
+        # D = [1,0]
+                # print (I)
+                # print (D)
+                for i in range(len(H)+1):
+                    if i < len(H):
+                        for j in range(len(H[i])):
+                            if i == 0:
+                                for k in range(len(I)):
+                                    H[i][j] += I[k]*(X[i][(k*len(H[i]))+j])
+                            else :
+                                for k in range(len(H[i-1])):
+                                    H[i][j] += H[i-1][k]*(X[i][(k*len(H[i]))+j])
+                            H[i][j] += Y[i][j]
+                            x = H[i][j]
+                            H[i][j] = act_func(x,activation_function)
                     else :
-                        dWx[i][k] = (-1)*(learning_rate)*(g[i][k%len(O)])*(H[i-1][int((k)/len(O))])
-                for k in range(len(dWy[i])):
-                    dWy[i][k] = (-1)*(learning_rate)*(g[i][k%len(O)])
+                        for j in range(len(O)):
+                            for k in range(len(H[len(H)-1])):
+                                    O[j] += H[len(H)-1][k]*(X[i][(k*len(O))+j])                     
+                            O[j] += Y[i][j]
+                            x = O[j]
+                            O[j] = act_func(x,activation_function)
+                            # e = D[j] - O[j]
+                            e = O[j] - D[j]                            
+                            g[i][j] = (e) * (act_func(O[j],activation_function,dif=True))
+                for i in range(len(H) , -1, -1):
+                    if i == len(H):
+                        for j in range(len(g[i-1])):
+                            for k in range(len(O)):
+                                g[i-1][j] += X[i][k+(len(O)*j)] * g[i][k]
+                            g[i-1][j] *= act_func(H[i-1][j],activation_function,dif=True)
 
-            elif i==0:
-                for k in range(len(dWx[i])):
-                    if k % len(H[i]) == 0:  
-                        dWx[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])*(I[int(k/len(H[i]))])
-                    else :
-                        dWx[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])*(I[int((k)/len(H[i]))])
-                for k in range(len(dWy[i])):
-                    dWy[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])
-            else :
-                for j in range(len(g[i-1])):
-                    for k in range(len(H[i])):
-                        g[i-1][j] += X[i][k+(len(H[i])*j)] * g[i][k]
-                    g[i-1][j] *= act_func(H[i-1][j],activation_function,dif=True)
+                        for k in range(len(dWx[i])):
+                            if k % len(O) == 0:  
+                                dWx[i][k] = (-1)*(learning_rate)*(g[i][k%len(O)])*(H[i-1][int(k/len(O))])
+                            else :
+                                dWx[i][k] = (-1)*(learning_rate)*(g[i][k%len(O)])*(H[i-1][int((k)/len(O))])
+                        for k in range(len(dWy[i])):
+                            dWy[i][k] = (-1)*(learning_rate)*(g[i][k%len(O)])
 
-                for k in range(len(dWx[i])):
-                    if k % len(H[i]) == 0:  
-                        dWx[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])*(H[i-1][int(k/len(H[i-1]))])
+                    elif i==0:
+                        for k in range(len(dWx[i])):
+                            if k % len(H[i]) == 0:  
+                                dWx[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])*(I[int(k/len(H[i]))])
+                            else :
+                                dWx[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])*(I[int((k)/len(H[i]))])
+                        for k in range(len(dWy[i])):
+                            dWy[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])
                     else :
-                        dWx[i][k] = (dWy-1)*(learning_rate)*(g[i][int(k%len(H[i]))])*(H[i-1][int((k-(k%len(H[i-1])))/len(H[i-1]))])
-                for k in range(len([i])):
-                    dWy[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])
-        print (dWy)
+                        for j in range(len(g[i-1])):
+                            for k in range(len(H[i])):
+                                g[i-1][j] += X[i][k+(len(H[i])*j)] * g[i][k]
+                            g[i-1][j] *= act_func(H[i-1][j],activation_function,dif=True)
+
+                        for k in range(len(dWx[i])):
+                            if k % len(H[i]) == 0:  
+                                dWx[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])*(H[i-1][int(k/len(H[i-1]))])
+                            else :
+                                # print (dWy-1)*(learning_rate)*(g[i][int(k%len(H[i]))])*(H[i-1][int((k-(k%len(H[i-1])))/len(H[i-1]))])
+                                dWx[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])*(H[i-1][int((k-(k%len(H[i-1])))/len(H[i-1]))])
+                        for k in range(len([i])):
+                            dWy[i][k] = (-1)*(learning_rate)*(g[i][int(k%len(H[i]))])
+                X , Y = chang_X_Y(X,Y,dWx,dWy)
+                num_of_instant_train += 1
+                # print (O)
+                # print (D)
+                print (num_of_instant_train)
+                for i in X:
+                    for j in i:
+                        file_x.write(str(j) + " ")
+                    file_x.write('\n')
+                for i in Y:
+                    for j in i:
+                        file_y.write(str(j) + " ")
+                    file_y.write('\n')
+
+                for i in O :
+                    file_output.write(str(i) + " ")
+                file_output.write("\n")
+                for i in D :
+                    file_output.write(str(i) + " ")
+                file_output.write("\n")
         round += 1
+    print (num_of_instant_train)
+    # print (X)
 
 def converset_data(data_set):
     c_data_set = []
@@ -127,7 +179,7 @@ def cross_validation(class_data_real, part_of_validate, data_size): #my data_siz
                     # for j in range(0,number_of_size_train[s_number_of_size][k]):
                 # print (k)
                 # print (math.floor(len(class_data[k])/part_of_validate))
-                print (one_class_size[k])
+                # print (one_class_size[k])
                 for j in range(one_class_size[k]):
                     # print (class_data_index)
                     # if len(class_data[k])!= 0:
@@ -182,3 +234,21 @@ def class_check(t):
         return [0,0,0,0,0,0,1,0]
     elif t == 't-SC-s':
         return [0,0,0,0,0,0,0,1]
+
+
+def set_I_D (data,I):
+    # print (len(data))
+    # print (len(I))
+    for i in range(len(I)):
+        I[i] = data[i+1]
+    D = class_check(data[len(data)-1])
+    return I,D
+
+def chang_X_Y (X_old,Y_old, dWx,dWy):
+    for i in range(len(X_old)):
+        for j in range(len(X_old[i])):
+            X_old[i][j] += dWx[i][j]
+    for i in range(len(Y_old)):
+        for j in range(len(Y_old[i])):
+            Y_old[i][j] += dWy[i][j]
+    return X_old,Y_old
