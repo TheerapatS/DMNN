@@ -14,6 +14,7 @@ def mk_neural_structure (number_of_hidden, number_of_node_hidden, number_of_inpu
         H.append(deepcopy(temp))
         Y.append(deepcopy(temp))
         g.append(deepcopy(temp))
+    temp = zerolistmaker(number_of_output)
     Y.append(deepcopy(temp))
     g.append(deepcopy(temp))
     X = []
