@@ -38,7 +38,7 @@ if __name__ == "__main__":
     # # dW = deepcopy(X)
     # # print (dW)
     # activation_function = 0
-    # learning_rate = 0.1
+    learning_rate = 0.15
     train(data_set, learning_rate, I, X, H, Y, O, g, D, activation_function)
     # c_data_set = converset_data(data_set)
     # class_data = [[],[],[],[],[],[],[],[]]

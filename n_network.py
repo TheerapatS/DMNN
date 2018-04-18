@@ -11,9 +11,12 @@ def train (data_set, learning_rate, I, X, H, Y, O, g, D, activation_function):
     class_data = [[],[],[],[],[],[],[],[]]
     for i in c_data_set:
         class_data = class_tokenize(i,class_data)
-    while round<1:
+    while round<100:
         if round == 0:
             data_for_train,data_test = cross_validation(class_data,part_of_validate,len(c_data_set))
+        for i in range(len(H)):
+            for j in range(len(H[i])):
+                H[i][j] = 0
         for i in range(len(H)+1):
             if i < len(H):
                 for j in range(len(H[i])):
