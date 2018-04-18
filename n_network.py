@@ -5,9 +5,9 @@ import random
 
 def train (data_set, learning_rate, I, X, H, Y, O, g,  activation_function, part_of_validate):
     round = 0
-    path_output = "E:\Work\\2_60\DM\HW2\Output\output_03.txt"
-    path_weight = "E:\Work\\2_60\DM\HW2\Output\X_03.txt"
-    path_bias = "E:\Work\\2_60\DM\HW2\Output\Y_03.txt"
+    path_output = "E:\Work\\2_60\DM\HW2\Output\output_04.txt"
+    path_weight = "E:\Work\\2_60\DM\HW2\Output\X_04.txt"
+    path_bias = "E:\Work\\2_60\DM\HW2\Output\Y_04.txt"
     file_output = open(path_output,'w')
     file_x = open(path_weight,'w')
     file_y = open(path_bias,'w')
@@ -24,17 +24,44 @@ def train (data_set, learning_rate, I, X, H, Y, O, g,  activation_function, part
             X[i][j] = t/30
             file_x.write(str(X[i][j]) + " ")
         file_x.write('\n')
-
     for i in range(len(Y)):
         for j in range(len(Y[i])):
             t = random.randint(1,3)
             Y[i][j] = t/30
+
             file_y.write(str(Y[i][j]) + " ")
         file_y.write('\n')
-    while round < 1000:
-        if round%int(10/part_of_validate) == 0:
+    while round < 100:
+        if round%int(10/part_of_validate) == 0 and round != 0:
+            
             data_for_train,data_test = cross_validation(class_data,part_of_validate,len(c_data_set))
-
+            for index_for_test in range(len(data_test)):
+                I,__ = set_I_D(data_test[index_for_test], I)
+                for i in range(len(H)+1):
+                    if i < len(H):
+                        for j in range(len(H[i])):
+                            if i == 0:
+                                for k in range(len(I)):
+                                    H[i][j] += I[k]*(X[i][(k*len(H[i]))+j])
+                            else :
+                                for k in range(len(H[i-1])):
+                                    H[i][j] += H[i-1][k]*(X[i][(k*len(H[i]))+j])
+                            H[i][j] += Y[i][j]
+                            x = H[i][j]
+                            H[i][j] = act_func(x,activation_function)
+                    else :
+                        for j in range(len(O)):
+                            for k in range(len(H[len(H)-1])):
+                                    O[j] += H[len(H)-1][k]*(X[i][(k*len(O))+j])                     
+                            O[j] += Y[i][j]
+                            x = O[j]
+                            O[j] = act_func(x,activation_function)
+                
+        for i in range(len(H)):
+            for j in range(len(H[i])):
+                H[i][j] = 0
+        for i in range(len(O)):
+            O[i] = 0
         for data_train_index in range(len(data_for_train)):
             for each_data_train_index in range(len(data_for_train[data_train_index])):
                 # print (data_for_train[data_train_index][each_data_train_index])
@@ -43,6 +70,7 @@ def train (data_set, learning_rate, I, X, H, Y, O, g,  activation_function, part
         # D = [1,0]
                 # print (I)
                 # print (D)
+
                 for i in range(len(H)+1):
                     if i < len(H):
                         for j in range(len(H[i])):
@@ -122,6 +150,7 @@ def train (data_set, learning_rate, I, X, H, Y, O, g,  activation_function, part
                 for i in D :
                     file_output.write(str(i) + " ")
                 file_output.write("\n")
+        
         round += 1
     print (num_of_instant_train)
     # print (X)
