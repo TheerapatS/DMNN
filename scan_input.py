@@ -45,8 +45,7 @@ def recieve_data ():
         part_of_validate = 1
     else:
         part_of_validate = 0
-    # part_of_train = int (input_str.strip('\n')) - int('0')
-    # part_of_validate = 10 - part_of_train
+        
     activation_function = -1
     while activation_function == -1:
         input_str = input("Activation function [Sigmoid(1), tanh(2), ReLU(3), LeakyReLU(4)] :: ")   # Sigmoid = 0 , tanh = 1 , ReLU = 2 , LeakyReLU = 3
